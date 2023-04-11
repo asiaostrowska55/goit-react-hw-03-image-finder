@@ -1,16 +1,27 @@
+import { Component } from 'react';
+import Searchbar from './Searchbar/Searchbar';
+import ImageGallery from './ImageGalleryItems/ImageGalleryItem';
+import ImageGalleryItem from './ImageGallery/ImageGallery';
+import Loader from './ImageGallery/ImageGallery';
+import Button from './ImageGallery/ImageGallery';
+import Modal from './ImageGallery/ImageGallery';
+
 export const App = () => {
   return (
     <div
       style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontSize: 40,
-        color: '#010101',
+        display: 'grid',
+        gridTemplateColumns: '1fr',
+        gridGap: '16px',
+        paddingBottom: '24px',
       }}
     >
-      React homework template
+      <Searchbar />
+      <ImageGallery />
+      <ImageGalleryItem />
+      <Loader />
+      <Button />
+      <Modal />
     </div>
   );
 };
