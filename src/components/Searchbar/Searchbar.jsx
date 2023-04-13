@@ -3,23 +3,18 @@ import { Component } from 'react';
 import css from './Searchbar.module.css';
 
 export class Searchbar extends Component {
+  state = {
+    inputQuery: '',
+  };
   handleSubmit = event => {
     event.preventDefault();
-    const response = axios.get('https://pixabay.com/api/', {
-      params: {
-        key: '33257268-27ad9fcecc17d6e2546f4b9dc',
-        q: search,
-        image_type: 'photo',
-        orientation: 'horizonatal',
-        safesearch: true,
-        per_page,
-        page,
-      },
-    });
+    const { inputQuery } = this.state;
+
+    this.props.getGallery(inputQuery);
   };
 
   render() {
-    const { imageSearch } = this.props;
+    const { imageSearch } = this.state;
     return (
       <header className={css.searchbar}>
         <form className={css.form}>
