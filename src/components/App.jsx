@@ -38,7 +38,15 @@ class App extends Component {
           tags: image.tags,
         })
       });
+
       let totalPages = Math.ceil(response.data.totalHits / PER_PAGE)
+      const previousImages = this.state.images;
+
+      if(page > 1) {
+        previousImages.forEach(photo => {
+          images.forEach({})
+        })
+      }
     }
   }
 
