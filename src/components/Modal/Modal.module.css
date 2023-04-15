@@ -13,5 +13,9 @@
 
 .modal {
   max-width: calc(100vw - 48px);
-  max-height: calc(100vh - 24px);
+  max-height: 100vh;
+  scale: 0.6;
+  object-fit: contain;
+  margin-bottom: 25px;
+  align-self: center;
 }

@@ -6,12 +6,11 @@ class ImageGalleryItem extends Component {
   render() {
     const { largeImageURL, webformatURL, id, tags, openModal } = this.props;
     return (
-      <li className={css.galleryItem}>
+      <li className={css.galleryItem} key={id}>
         <img
           className={css.image}
           src={webformatURL}
           alt={tags}
-          key={id}
           onClick={() => openModal(largeImageURL)}
         />
       </li>

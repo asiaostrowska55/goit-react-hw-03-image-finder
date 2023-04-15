@@ -10,7 +10,7 @@ const INITIAL_STATE = {
   images: [],
   query: '',
   page: 1,
-  largeImageURL: '',
+  largeImage: '',
   isLoading: false,
   isModal: false,
   totalHits: 0,
@@ -36,14 +36,14 @@ export class App extends Component {
       let images = [];
       response.hits.forEach(image => {
         images.push({
-          id: images.id,
+          id: image.id,
           webformatURL: image.webformatURL,
           largeImageURL: image.largeImageURL,
           tags: image.tags,
         });
       });
 
-      let totalPages = Math.ceil(response.data.totalHits / PER_PAGE);
+      let totalPages = Math.ceil(response.totalHits / PER_PAGE);
 
       const previousImages = this.state.images;
 
@@ -79,10 +79,10 @@ export class App extends Component {
   };
 
   openModal = largeImage => {
-    this.setState({ isModal: true, largeImageURL: largeImage });
+    this.setState({ isModal: true, largeImage: largeImage });
   };
   closeModal = () => {
-    this.setState({ isModal: false, largeImageURL: '' });
+    this.setState({ isModal: false, largeImage: '' });
   };
 
   render() {
@@ -108,10 +108,10 @@ export class App extends Component {
         <Searchbar getImages={value => this.getImages(value, 1)} />{' '}
         {isLoading && <Loader />}
         <ImageGallery images={images} openModal={this.openModal} />
-        {totalHits > 0 && page < totalPages && (
+        {totalHits > 0 && page < totalPages && page !== totalPages && (
           <Button
             loadMore={page}
-            onClick={nextPage => this.getImages(nextPage, query)}
+            onClick={nextPage => this.getImages(query, nextPage)}
           />
         )}{' '}
         {isModal && (

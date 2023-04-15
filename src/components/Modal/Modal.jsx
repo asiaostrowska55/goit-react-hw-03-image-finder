@@ -4,13 +4,13 @@ import css from './Modal.module.css';
 
 class Modal extends Component {
   componentDidMount() {
-    window.addEventListener('keyup'.this.handleClose);
+    window.addEventListener('keyup', this.handleClose);
   }
   componentWillUnmount() {
-    window.removeEventListener('keyup'.this.handleClose);
+    window.removeEventListener('keyup', this.handleClose);
   }
   handleClose = event => {
-    if (event.key === 'Escape') {
+    if (event.code === 'Escape') {
       return this.props.closeModal();
     }
   };
@@ -29,7 +29,7 @@ class Modal extends Component {
 }
 Modal.propTypes = {
   largeImage: PropTypes.string.isRequired,
-  closeModal: PropTypes.func.isRequired,
+  closeModal: PropTypes.func,
   tags: PropTypes.string,
 };
 
