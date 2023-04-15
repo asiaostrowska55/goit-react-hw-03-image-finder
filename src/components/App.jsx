@@ -1,9 +1,9 @@
 import { Component } from 'react';
-import { Searchbar } from './Searchbar/Searchbar';
-import { ImageGallery } from './ImageGallery/ImageGallery';
-import { Loader } from './Loader/Loader';
-import { Button } from './Button/Button';
-import { Modal } from './Modal/Modal';
+import Searchbar from './Searchbar/Searchbar';
+import ImageGallery from './ImageGallery/ImageGallery';
+import Loader from './Loader/Loader';
+import Button from './Button/Button';
+import Modal from './Modal/Modal';
 import { fetchGalleryImage, PER_PAGE } from './api';
 
 const INITIAL_STATE = {
@@ -17,47 +17,85 @@ const INITIAL_STATE = {
   isLastPage: false,
 };
 
-class App extends Component {
+export class App extends Component {
   state = {
     ...INITIAL_STATE,
   };
 
-  handleSubmit()
+  async componentDidMount() {
+    this.setState({ isLoading: true });
+    const response = await fetchGalleryImage(this.state.query);
 
-  getImage = async (query, page) => {
-    this.setState({ isLoading: true})
-    const response = await fetchGalleryImage(query, page)
+    this.setState({ images: response.hits });
+  }
+  getImages = async (query, page) => {
+    this.setState({ isLoading: true });
+    const response = await fetchGalleryImage(query, page);
 
-    if(response.totalHits > 0){
-      let images =[];
+    if (response.totalHits > 0) {
+      let images = [];
       response.hits.forEach(image => {
         images.push({
           id: images.id,
           webformatURL: image.webformatURL,
           largeImageURL: image.largeImageURL,
           tags: image.tags,
-        })
+        });
       });
 
-      let totalPages = Math.ceil(response.data.totalHits / PER_PAGE)
+      let totalPages = Math.ceil(response.data.totalHits / PER_PAGE);
+
       const previousImages = this.state.images;
 
-      if(page > 1) {
+      if (page > 1) {
         previousImages.forEach(photo => {
-          images.forEach({})
-        })
+          images.forEach((image, array, index) => {
+            if (photo.id === image.id) {
+              array.splice(index, 1);
+            }
+          });
+        });
       }
+
+      this.setState(prevState => {
+        let renderGallery = [];
+
+        page > 1
+          ? (renderGallery = [...prevState.images, images])
+          : (renderGallery = [...images]);
+
+        return {
+          images: renderGallery,
+          query,
+          page,
+          isLoading: false,
+          totalHits: response.totalHits,
+          totalPages,
+        };
+      });
+    } else {
+      this.setState({ ...INITIAL_STATE });
     }
-  }
+  };
 
   openModal = largeImage => {
-    this.setState({isModal: true, largeImageURL: largeImage})
-  }
+    this.setState({ isModal: true, largeImageURL: largeImage });
+  };
   closeModal = () => {
-    this.setState({isModal: false, largeImageURL: ''})
-  }
+    this.setState({ isModal: false, largeImageURL: '' });
+  };
 
   render() {
+    const {
+      query,
+      page,
+      images,
+      totalHits,
+      totalPages,
+      isLoading,
+      largeImage,
+      isModal,
+    } = this.state;
     return (
       <div
         style={{
@@ -67,13 +105,19 @@ class App extends Component {
           paddingBottom: '24px',
         }}
       >
-        <Searchbar />
-        <ImageGallery/>
-        <Loader />
-        <Button />
-        <Modal />
+        <Searchbar getImages={value => this.getImages(value, 1)} />{' '}
+        {isLoading && <Loader />}
+        <ImageGallery images={images} openModal={this.openModal} />
+        {totalHits > 0 && page < totalPages && (
+          <Button
+            loadMore={page}
+            onClick={nextPage => this.getImages(nextPage, query)}
+          />
+        )}{' '}
+        {isModal && (
+          <Modal closeModal={this.closeModal} largeImage={largeImage} />
+        )}
       </div>
     );
   }
 }
-export default App;
