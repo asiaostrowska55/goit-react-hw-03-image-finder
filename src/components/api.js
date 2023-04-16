@@ -1,5 +1,5 @@
 import axios from 'axios';
-const API_KEY = '33257268-27ad9fcecc17d6e2546f4b9dc';
+export const API_KEY = '33257268-27ad9fcecc17d6e2546f4b9dc';
 export const PER_PAGE = 12;
 
 export const fetchGalleryImage = async (search, page) => {
@@ -15,10 +15,6 @@ export const fetchGalleryImage = async (search, page) => {
       per_page: PER_PAGE,
       page: page,
     },
-  }).then(response => {
-    const { totalHits, hits } = response.data;
-    const gallery = { totalHits, hits };
-    return gallery;
   });
-  return response;
+  return response.data;
 };

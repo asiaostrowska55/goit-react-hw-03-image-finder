@@ -15,7 +15,7 @@ const INITIAL_STATE = {
   isLoading: false,
   isModal: false,
   totalHits: 0,
-  isLastPage: false,
+  totalPages: 1,
 };
 
 export class App extends Component {
@@ -33,29 +33,31 @@ export class App extends Component {
       this.setState({ isLoading: false });
     }, 700);
   }
+
   getImages = async (query, page) => {
     this.setState({ isLoading: true });
+
     const response = await fetchGalleryImage(query, page);
 
     if (response.totalHits > 0) {
       let images = [];
-      response.hits.forEach(image => {
+      response.hits.forEach(el => {
         images.push({
-          id: image.id,
-          webformatURL: image.webformatURL,
-          largeImageURL: image.largeImageURL,
-          tags: image.tags,
+          id: el.id,
+          webformatURL: el.webformatURL,
+          largeImageURL: el.largeImageURL,
+          tags: el.tags,
         });
       });
 
-      let totalPages = Math.ceil(response.totalHits / PER_PAGE);
+      const totalPages = Math.ceil(response.totalHits / PER_PAGE);
 
       const previousImages = this.state.images;
 
-      if (page > 1) {
-        previousImages.forEach(photo => {
-          images.forEach((image, array, index) => {
-            if (photo.id === image.id) {
+      if (page !== 1) {
+        previousImages.forEach(el => {
+          images.forEach((photo, index, array) => {
+            if (el.id === photo.id) {
               array.splice(index, 1);
             }
           });
@@ -66,7 +68,7 @@ export class App extends Component {
         let renderGallery = [];
 
         page > 1
-          ? (renderGallery = [...prevState.images, images])
+          ? (renderGallery = [...prevState.images, ...images])
           : (renderGallery = [...images]);
 
         return {
@@ -96,11 +98,12 @@ export class App extends Component {
       page,
       images,
       totalHits,
-      totalPages,
       isLoading,
       largeImage,
       isModal,
+      totalPages,
     } = this.state;
+
     return (
       <div
         style={{
@@ -110,14 +113,19 @@ export class App extends Component {
           paddingBottom: '24px',
         }}
       >
-        <Searchbar getImages={this.getImages} query={query} page={page} />
+        <Searchbar getImages={value => this.getImages(value, 1)} />
         {isLoading && <Loader />}
         <ImageGallery images={images} openModal={this.openModal} />
         {isModal && (
           <Modal closeModal={this.closeModal} largeImage={largeImage} />
         )}
-        {totalHits > 0 && page < allPages && page !== allPages && (
-          <Button page={page} onClick={next => this.getImages(query, next)} />
+        {totalHits > 0 && page < totalPages && page !== totalPages ? (
+          <Button
+            page={page}
+            onClick={nextPage => this.getImages(query, nextPage)}
+          />
+        ) : (
+          ''
         )}
       </div>
     );
