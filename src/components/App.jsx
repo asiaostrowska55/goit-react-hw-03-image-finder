@@ -10,6 +10,7 @@ const INITIAL_STATE = {
   images: [],
   query: '',
   page: 1,
+  perPage: PER_PAGE,
   largeImage: '',
   isLoading: false,
   isModal: false,
@@ -27,6 +28,10 @@ export class App extends Component {
     const response = await fetchGalleryImage(this.state.query);
 
     this.setState({ images: response.hits });
+
+    setTimeout(async () => {
+      this.setState({ isLoading: false });
+    }, 700);
   }
   getImages = async (query, page) => {
     this.setState({ isLoading: true });
@@ -105,17 +110,14 @@ export class App extends Component {
           paddingBottom: '24px',
         }}
       >
-        <Searchbar getImages={value => this.getImages(value, 1)} />{' '}
+        <Searchbar getImages={this.getImages} query={query} page={page} />
         {isLoading && <Loader />}
         <ImageGallery images={images} openModal={this.openModal} />
-        {totalHits > 0 && page < totalPages && page !== totalPages && (
-          <Button
-            loadMore={page}
-            onClick={nextPage => this.getImages(query, nextPage)}
-          />
-        )}{' '}
         {isModal && (
           <Modal closeModal={this.closeModal} largeImage={largeImage} />
+        )}
+        {totalHits > 0 && page < allPages && page !== allPages && (
+          <Button page={page} onClick={next => this.getImages(query, next)} />
         )}
       </div>
     );

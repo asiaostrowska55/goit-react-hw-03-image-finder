@@ -1,11 +1,11 @@
-import PropTypes from 'prop-types';
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import css from './Button.module.css';
 
 class Button extends Component {
   handleClick = () => {
-    const { loadMore } = this.props;
-    const nextPage = loadMore + 1;
+    const { currentPage } = this.props;
+    const nextPage = currentPage + 1;
     this.props.onClick(nextPage);
   };
   render() {
@@ -16,8 +16,9 @@ class Button extends Component {
     );
   }
 }
+
 Button.propTypes = {
-  onClick: PropTypes.func.isRequired,
-  loadMore: PropTypes.number,
+  loadMore: PropTypes.func,
 };
+
 export default Button;
