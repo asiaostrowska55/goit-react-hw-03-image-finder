@@ -2,15 +2,6 @@ import { Component } from 'react';
 import PropTypes from 'prop-types';
 import css from './Button.module.css';
 
-// const Button = props => {
-//   const { loadMore } = props;
-
-//   return (
-//     <button type="button" className={css.button} onClick={loadMore}>
-//       Load More
-//     </button>
-//   );
-// };
 class Button extends Component {
   handleClick = () => {
     const { page } = this.props;
